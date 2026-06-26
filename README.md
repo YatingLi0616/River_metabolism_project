@@ -1,4 +1,4 @@
-# Code for: "Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States""
+# Code for: "Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States"
 
 ## overview
 end-to-end pipeline for modeling river metabolism (GPP, ER, NEP) as a
@@ -79,7 +79,7 @@ step of this stage but is run separately - see its own section below.
 ### pipeline
 
 ```
-1_Calculate_average_rivermetabolism.R   appling GPP/ER/drivers -> daily & monthly averages
+1_Calculate_average_rivermetabolism.R   Appling GPP/ER/drivers -> daily & monthly averages
 2_Calculate_averge_USGS.R               usgs water chemistry (pH, alk, ...) -> daily & monthly averages
 3_1_Nutrient_index.R                    usgs fertilizer/manure loading + nldi upstream sum -> nutrient index
 3_2_Discharge_skewness.R                daily discharge -> annual l-moments, averaged across years
@@ -115,8 +115,8 @@ script for the parameters you actually plan to use.
 
 | path | description |
 |---|---|
-| `Data/input/river_metabolism_data/Appling_Output.rds` | appling et al. 2018 metabolism outputs (GPP, ER), per site |
-| `Data/input/river_metabolism_data/Appling_Input.rds` | appling et al. 2018 model inputs (depth, light, discharge, temp), per site |
+| `Data/input/river_metabolism_data/Appling_Output.rds` | Appling et al. 2018 metabolism outputs (GPP, ER), per site |
+| `Data/input/river_metabolism_data/Appling_Input.rds` | Appling et al. 2018 model inputs (depth, light, discharge, temp), per site |
 | `Data/input/USGS_data/<param>_original.csv` | usgs water chemistry, one file per parameter |
 | `Data/input/nutrient_data/ag_*.csv`, `de_*.csv` | usgs fertilizer/manure loading by COMID (2002/2007/2012/2017) |
 | `Data/input/nutrient_data/site_COMID.csv` | site_id to COMID lookup |
