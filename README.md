@@ -1,4 +1,4 @@
-# Code for: Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States
+# Code for: "Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States""
 
 ## overview
 end-to-end pipeline for modeling river metabolism (GPP, ER, NEP) as a
@@ -63,15 +63,15 @@ below for its actual structure.
 The data used in this pipeline are archived at Zenodo:
 [DOI link once you have one]
 
-Raw input data (USGS gauge data, Appling et al. 2018, NLCD rasters, etc.)
-and the final compiled dataset (`ML_monthly.rds`) are both included.
+Raw input data (USGS gauge data, Appling et al. 2018, Maavara et al. 2025, NLCD rasters, etc.)
+and parts of the final compiled datasets are both included.
 Download and place under `Data/` following the structure in this README.
 
 ---
 
 ## stage 1: data compilation
 
-builds the model-ready dataset (`ML_monthly.rds`) by compiling river
+builds the model-ready dataset by compiling river
 metabolism, water chemistry, nutrient loading, discharge statistics, and
 tree canopy cover for each site. stage 2 (land cover) feeds into the last
 step of this stage but is run separately - see its own section below.
@@ -148,7 +148,7 @@ either of those.
 | `3_4_Calculate_landcover/` (stage 2) | `Data/output/NLCD_data/landcover_allsites.csv` |
 | `4_Complie_data.R` | `Data/output/ML_data/ML_{daily,monthly}_{smallarea, largearea}.rds` - final model input |
 
-### stage 1 r package dependencies
+### stage 1 R package dependencies
 
 `data.table`, `lubridate`, `nhdplusTools`, `lmomco`, `sf`, `terra`,
 `exactextractr`, `seacarb`
@@ -230,7 +230,7 @@ is worth checking the corresponding `debug_<site_id>.log`).
 
 ---
 
-## stage 3: random forest / shap / pdp (`5_Machine_learning/`)
+## stage 3: Random Forest / SHAP / PDP (`5_Machine_learning/`)
 
 random forest modeling of GPP, ER, and NEP, with treeshap importance,
 nested cross-validation feature-combination comparison, and conditional
@@ -323,7 +323,7 @@ packages aren't on the default library path (e.g. a custom hpc install):
 custom_lib_path <- ""   # set to your library path if needed, otherwise leave blank
 ```
 
-### stage 3 r package dependencies
+### stage 3 R package dependencies
 
 `data.table`, `mlr3`, `mlr3learners`, `mlr3tuning`, `paradox`, `ranger`,
 `treeshap`, `iml`, `future`, `tictoc`, `MLmetrics`, `foreach`, `doParallel`
