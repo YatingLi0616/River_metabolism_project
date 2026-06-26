@@ -6,9 +6,17 @@
 #   for monthly data - daily compilation follows the same steps, just
 #   swapping in the daily versions of each input file.
 #
+# data source:
+# The file 'appling_data_06202024_Taylor.csv' was downloaded from
+# Maavara et al. (2025). River metabolism in the contiguous United States: Random forest model code, inputs and outputs.
+# Dryad Digital Repository.
+# DOI: https://doi.org/10.5061/dryad.c2fqz61kx
+# Additional predictor variables were generated from the processed datasets produced in the previous preprocessing steps.
+
 # inputs:
 #   - Data/output/river_metabolism_data/Appling_input_average_monthly.csv
 #   - Data/output/river_metabolism_data/Appling_output_average_monthly.csv
+#   - Data/input/appling_data_06202024_Taylor.csv  
 #   - Data/output/USGS_data/<pH|alk|...>_monthly.csv  (from 2_Calculate_averge_USGS.R)
 #   - Data/output/nutrient_index.csv                  (from 3_1_Nutrient_index.R)
 #   - Data/output/discharge_skewness.csv              (from 3_2_Discharge_skewness.R)
@@ -215,6 +223,7 @@ combined_data[, `:=`(alk_1 = NULL)]
 combined_data <- combined_data[DIC > 0]
 
 # 8. other variables -----------------------------------------------------------
+
 ws_dt <- fread("Data/input/appling_data_06202024_Taylor.csv")
 ws_dt$site_name <- gsub("nwis_", "", ws_dt$site_name)
 

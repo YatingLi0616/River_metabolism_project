@@ -1,3 +1,7 @@
+# # data source:
+# U.S. Geological Survey (USGS). Annual National Land Cover Database (NLCD) Collection 1 Science Products
+# DOI: https://doi.org/10.5066/P94UXNTS
+
 #!/bin/bash
 # create a binary mask for one nlcd class and reproject it to wgs84
 # usage: bash extract_and_reproject.sh <class_code>

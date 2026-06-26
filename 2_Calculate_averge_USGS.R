@@ -5,11 +5,12 @@
 #   and monthly site-level averages. edit param_name and rerun for each
 #   parameter you need (alk, pH, TN, TP, tds, ...).
 #
+# data source:
+# U.S. Geological Survey (USGS) Water Quality Portal (WQP). 
+# raw data were processed to obtain the variables used in this study 
+#
 # inputs:
 #   - Data/input/USGS_data/<param_name>_original.csv
-#     (long-format table with columns site_no, stream_date, value, and
-#     optionally stream_season - any of these not present are simply
-#     skipped when dropped)
 #
 # outputs (written to Data/output/USGS_data/):
 #   - <param_name>_daily.csv   : value averaged by site and day-of-year

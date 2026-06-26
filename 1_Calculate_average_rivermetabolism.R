@@ -5,6 +5,12 @@
 #   monthly site-level averages, for both the model outputs (GPP, ER) and
 #   the model inputs (depth, light, discharge, water temperature).
 #
+# data source:
+# Appling et al. (2018). The metabolic regimes of 356 rivers in the United States.
+# The original dataset was downloaded from the published data release and
+# processed to generate the analysis-ready variables used in this study.
+# DOI: https://doi.org/10.1038/sdata.2018.292
+# 
 # inputs:
 #   - Data/input/river_meatabolism_data/original_data/Appling_Output.rds
 #     (list of per-site data.frames with GPP_daily_mean, ER_daily_mean)

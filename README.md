@@ -60,11 +60,10 @@ below for its actual structure.
 
 ## data availability
 
-The data used in this pipeline are archived at Zenodo:
-[DOI link once you have one]
+The data used in this pipeline are archived at Zenodo: https://zenodo.org/records/20889806
 
-Raw input data (USGS gauge data, Appling et al. 2018, Maavara et al. 2025, NLCD rasters, etc.)
-and parts of the final compiled datasets are both included.
+Raw input data (USGS gauge data, Appling et al. (2018), Maavara et al. (2025), NLCD rasters, etc.)
+and the final compiled datasets are both included.
 Download and place under `Data/` following the structure in this README.
 
 ---
@@ -115,14 +114,14 @@ script for the parameters you actually plan to use.
 
 | path | description |
 |---|---|
-| `Data/input/river_metabolism_data/Appling_Output.rds` | Appling et al. 2018 metabolism outputs (GPP, ER), per site |
-| `Data/input/river_metabolism_data/Appling_Input.rds` | Appling et al. 2018 model inputs (depth, light, discharge, temp), per site |
+| `Data/input/river_metabolism_data/Appling_Output.rds` | Appling et al. (2018) metabolism outputs (GPP, ER), per site |
+| `Data/input/river_metabolism_data/Appling_Input.rds` | Appling et al. (2018) model inputs (depth, light, discharge, temp), per site |
 | `Data/input/USGS_data/<param>_original.csv` | usgs water chemistry, one file per parameter |
 | `Data/input/nutrient_data/ag_*.csv`, `de_*.csv` | usgs fertilizer/manure loading by COMID (2002/2007/2012/2017) |
 | `Data/input/nutrient_data/site_COMID.csv` | site_id to COMID lookup |
 | `Data/input/TCC_data/subcatchments/subcatchment_<site_id>.shp` | per-site subcatchment polygons |
 | `Data/input/TCC_data/nlcd_tcc_.../*.tif` | nlcd tree canopy cover raster |
-| `Data/input/appling_data_06202024_Taylor.csv` | Maavara et al. 2025 data (stream order, upstream area, river width) |
+| `Data/input/appling_data_06202024_Taylor.csv` | Maavara et al. (2025) data (stream order, upstream area, river width) |
 | nlcd raster + basin shapefiles | see stage 2 inputs, below |
 
 two intermediate files are also required directly by later scripts in this

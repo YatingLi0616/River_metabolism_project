@@ -5,6 +5,11 @@
 #   subcatchment, using zonal statistics (exact_extract) on the nlcd tcc
 #   raster.
 #
+# data source:
+# U.S. Department of Agriculture Forest Service.
+# National Land Cover Database (NLCD) Tree Canopy Cover (TCC) Science Product
+# Available from: https://www.mrlc.gov/data/type/nlcd-tree-canopy-cover
+#
 # inputs:
 #   - Data/input/TCC_data/subcatchments/subcatchment_<site_id>.shp
 #     (one polygon shapefile per site, assumed to contain exactly one

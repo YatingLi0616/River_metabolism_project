@@ -10,10 +10,11 @@
 #   approach can be applied directly to concentration data.
 #
 # data source:
-#   USGS Nitrogen and phosphorus inputs from fertilizer and manure in the
-#   Continental United States, 2002-2017 (kg/yr)
-#   https://www.usgs.gov/data/nitrogen-and-phosphorus-inputs-fertilizer-and-manure-continental-united-states-2002-2017
-#
+# Sekellick, A. J., & Sherr, C. F. (2024).
+# Nitrogen and phosphorus inputs from fertilizer and manure in the Continental United States, 2002–2017.
+# U.S. Geological Survey data release.
+# DOI: https://doi.org/10.5066/P9WDBIXC
+
 # inputs:
 #   - Data/input/nutrient_data/ag_tn_cman.csv, ag_tn_fert.csv, ag_tn_uman.csv,
 #     ag_tp_cman.csv, ag_tp_fert.csv, ag_tp_uman.csv, de_tn_fert.csv,
