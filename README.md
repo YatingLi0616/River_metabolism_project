@@ -58,6 +58,17 @@ below for its actual structure.
 
 ---
 
+## data availability
+
+The data used in this pipeline are archived at Zenodo:
+[DOI link once you have one]
+
+Raw input data (USGS gauge data, Appling et al. 2018, NLCD rasters, etc.)
+and the final compiled dataset (`ML_monthly.rds`) are both included.
+Download and place under `Data/` following the structure in this README.
+
+---
+
 ## stage 1: data compilation
 
 builds the model-ready dataset (`ML_monthly.rds`) by compiling river
@@ -93,7 +104,7 @@ run order:
 7. 4_Complie_data.R                        <- run last, after all of the above
 ```
 
-**a note on `2_Calculate_averge_USGS.R`**: this script processes one water
+**note on `2_Calculate_averge_USGS.R`**: this script processes one water
 chemistry parameter per run - set `param_name` near the top (`"alk"`,
 `"pH"`, `"TN"`, `"TP"`, ...) and rerun for each parameter you need.
 `4_Complie_data.R` only pulls in whichever parameters are listed in its own
