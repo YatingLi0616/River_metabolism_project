@@ -1,10 +1,11 @@
-# RF_monthly.R
+# RF_monthly_local.R
 #
 # purpose:
 #   trains a single random forest model (via mlr3 + ranger) for each of three
 #   river metabolism targets (GPP, ER, NEP), using an 80/20 train/test split
 #   and 10-fold cv grid search for hyperparameter tuning. computes treeshap
 #   importance and per-observation shap dependency values for the final model.
+#
 #
 # inputs:
 #   - data/input/ml_monthly.rds : data.table with columns GPP, ER, NEP, and
@@ -15,17 +16,23 @@
 #   - output/ml_monthly/results/<target>_treeshap_importance.csv
 #   - output/ml_monthly/results/<target>_shap_dependency.csv
 #   - output/ml_monthly/results/overall_summary.csv
-#   - output/ml_monthly/models/<target>_main_model.rds  (used by pdp_analysis_parallel.R)
+#   - output/ml_monthly/models/<target>_main_model.rds  (used by pdp_analysis_local.R)
 #
 # usage:
-#   Rscript RF_monthly.R
-#   (intended to be run from the project root - see RF_monthly.slurm)
+#   Rscript RF_monthly_local.R
+#   or open in RStudio and run the whole script (Source)
+#   (run from the project root, or set the working directory below)
+#
+# expected runtime: this trains 3 random forests with a 10-fold cv grid
+# search each, plus treeshap on the full dataset - on a laptop this can
+# take anywhere from several minutes to an hour or more depending on
+# dataset size and core count. 
 
 
 # 1. setup ----------------------------------------------------------------------
 
-# set this if your r packages live in a non-default location (e.g. an hpc
-# cluster library path). leave blank to use the default library path.
+# set this if your r packages live in a non-default location (e.g. a conda
+# or renv library path). leave blank to use the default library path.
 custom_lib_path <- ""
 if (nzchar(custom_lib_path)) .libPaths(custom_lib_path)
 
@@ -39,13 +46,15 @@ library(future)
 library(tictoc)
 library(ranger)
 library(MLmetrics)
+library(parallel)
 
-# this script assumes it is run from the project root (see RF_monthly.slurm,
-# which cd's there before calling Rscript). uncomment and edit if running
-# interactively from elsewhere:
+# uncomment and edit if running from somewhere other than the project root:
 # setwd("your/project/root")
 
-n_cores <- as.numeric(Sys.getenv("SLURM_CPUS_PER_TASK", 1))
+# use all but one local core, so the machine stays responsive for other work -
+# edit this directly if you want to use more or fewer cores
+n_cores <- max(1, parallel::detectCores() - 1)
+cat("Using", n_cores, "cores locally\n")
 
 output_base  <- "Output/RF/RF_ML_monthly/"
 results_path <- file.path(output_base, "results/")
@@ -57,7 +66,7 @@ for (d in c(output_base, results_path, model_path)) {
 
 # 2. load data and define tasks ------------------------------------------------
 
-ML_data <- readRDS("Data/output/ML_data/ML_monthly.rds")
+ML_data <- readRDS("Data/input/ML_monthly.rds")
 
 feature_cols <- c("light_eff", "disch_skew",
                   "DIC", "nutrient_index",
@@ -222,7 +231,7 @@ param_set <- ps(
 
 # num.threads = 1 here is intentional: future already parallelizes across
 # hyperparameter combinations during tuning, so each individual model fit
-# should stay single-threaded to avoid oversubscribing cpus on a shared node
+# should stay single-threaded to avoid oversubscribing local cpu cores
 tuning_learner <- function() {
   lrn("regr.ranger", predict_type = "response", num.threads = 1)
 }
@@ -247,3 +256,5 @@ toc()
 
 overall_summary <- rbind(GPP_summary, ER_summary, NEP_summary)
 write.csv(overall_summary, file.path(results_path, "overall_summary.csv"), row.names = FALSE)
+
+cat("\ndone. models saved to:", model_path, "\n")

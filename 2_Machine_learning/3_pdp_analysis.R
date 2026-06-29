@@ -1,36 +1,44 @@
-# pdp_analysis_parallel.R
+# pdp_analysis_local.R
 #
 # purpose:
 #   conditional pdp / ice threshold analysis for the random forest models
-#   produced by RF_monthly.R. for each target (GPP, ER, NEP) and a set of
-#   predefined feature/gate/threshold combinations, splits observations into
-#   low/high groups by the gate feature and computes:
+#   produced by RF_monthly_local.R. for each target (GPP, ER, NEP) and a set
+#   of predefined feature/gate/threshold combinations, splits observations
+#   into low/high groups by the gate feature and computes:
 #     1. conditional 1d pdp for feature_x, separately for the low and high groups
 #     2. overall 1d pdp for the gate feature
 #     3. 2d pdp for feature_x x feature_gate
 #   combinations within a target run in parallel across the available cpus.
 #
-# inputs:
-#   - <data_path> : rds file matching the data used to train the models
-#     (data.table with the feature columns and GPP/ER/NEP target columns)
-#   - <model_dir> : directory containing <target>_main_model.rds files,
-#     produced by RF_monthly.R
 #
-# outputs (written under <output_dir>/ModeB_<target>_<feature_x>_by_<feature_gate>_thr<threshold>/):
+# inputs:
+#   - data_path : rds file matching the data used to train the models
+#     (data.table with the feature columns and GPP/ER/NEP target columns)
+#   - model_dir : directory containing <target>_main_model.rds files,
+#     produced by RF_monthly_local.R
+#
+# outputs (written under output_dir/ModeB_<target>_<feature_x>_by_<feature_gate>_thr<threshold>/):
 #   - PDP_conditional.csv : 1d pdp for feature_x, split by gate threshold
 #   - PDP_gate_overall.csv : 1d pdp for the gate feature, all data
 #   - PDP_2D.csv : 2d pdp for feature_x x feature_gate
 #
 # usage:
-#   Rscript pdp_analysis_parallel.R <data_path> <model_dir> <output_dir> [target]
-#   [target] is optional - one of GPP/ER/NEP, or omit/pass ALL to run all three
-#   (see pdp_parallel.slurm for the cluster array-job version)
+#   Rscript pdp_analysis_local.R
+#     uses the default paths below
+#   Rscript pdp_analysis_local.R <data_path> <model_dir> <output_dir> [target]
+#     overrides the defaults - [target] is optional, one of GPP/ER/NEP,
+#     or omit/pass ALL to run all three
+#   or open in RStudio and run the whole script (Source) to use the defaults
+#
+# expected runtime: this loads each target's model and computes pdp/ice
+# curves for 6 feature combinations per target - on a laptop this typically
+# takes a few minutes per target.
 
 
 # 1. setup ---------------------------------------------------------------------
 
-# set this if your r packages live in a non-default location (e.g. an hpc
-# cluster library path). leave blank to use the default library path.
+# set this if your r packages live in a non-default location (e.g. a conda
+# or renv library path). leave blank to use the default library path.
 custom_lib_path <- ""
 if (nzchar(custom_lib_path)) .libPaths(custom_lib_path)
 
@@ -39,23 +47,20 @@ library(ranger)
 library(iml)
 library(foreach)
 library(doParallel)
+library(parallel)
 
-args <- commandArgs(trailingOnly = TRUE)
-
-if (length(args) < 3) {
-  stop("Usage: Rscript pdp_analysis_parallel.R <data_path> <model_dir> <output_dir> [target]")
-}
-
-data_path <- args[1]
-model_dir <- args[2]
-output_dir <- args[3]
-target_arg <- ifelse(length(args) >= 4, args[4], "ALL")
+# defaults used when no command-line arguments are supplied - edit these if
+# your paths differ, or override at the command line (see usage above)
+default_data_path <- "Data/input/ML_monthly.rds"
+default_model_dir <- "Output/RF/RF_ML_monthly/models/"
+default_output_dir <- "Output/RF/RF_ML_monthly/pdp_ice_threshold_analysis/"
+default_target <- "ALL"
 
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 
-# parallel setup: one worker per combination, within a target
-n_cores <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", unset = "1"))
-n_cores <- max(1, n_cores - 1)
+# parallel setup: one worker per combination, within a target -
+# use all but one local core, so the machine stays responsive for other work
+n_cores <- max(1, parallel::detectCores() - 1)
 cat("Using", n_cores, "parallel cores\n")
 
 cl <- makeCluster(n_cores)
@@ -261,3 +266,5 @@ for (target in targets_to_run) {
     }
   }
 }
+
+cat("\ndone. results saved to:", output_dir, "\n")

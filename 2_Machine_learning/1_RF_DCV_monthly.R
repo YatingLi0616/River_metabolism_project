@@ -1,4 +1,4 @@
-# RF_DCV_monthly.R
+# RF_DCV_monthly_local.R
 #
 # purpose:
 #   nested (double) cross-validation comparison of feature-set combinations
@@ -7,6 +7,7 @@
 #   watershed, and their unions) through a 5-fold outer cv with a 10-fold
 #   inner cv grid search for hyperparameter tuning, to get an unbiased
 #   estimate of test performance for each combination.
+#
 #
 # inputs:
 #   - data/input/ml_monthly.rds : data.table with columns GPP, ER, NEP, and
@@ -18,14 +19,20 @@
 #   - output/ml_monthly/all_feature_combination_results.rds
 #
 # usage:
-#   Rscript RF_DCV_monthly.R
-#   (intended to be run from the project root - see RF_DCV_monthly.slurm)
+#   Rscript RF_DCV_monthly_local.R
+#   or open in RStudio and run the whole script (Source)
+#   (run from the project root, or set the working directory below)
+#
+# expected runtime: this is the most computationally intensive script in
+# the pipeline - 3 targets x 7 feature combinations x 5 outer folds, each
+# with its own 10-fold inner cv grid search. on a laptop this can take
+# several hours. 
 
 
 # 1. setup ---------------------------------------------------------------------
 
-# set this if your r packages live in a non-default location (e.g. an hpc
-# cluster library path). leave blank to use the default library path.
+# set this if your r packages live in a non-default location (e.g. a conda
+# or renv library path). leave blank to use the default library path.
 custom_lib_path <- ""
 if (nzchar(custom_lib_path)) .libPaths(custom_lib_path)
 
@@ -37,13 +44,16 @@ library(paradox)
 library(future)
 library(tictoc)
 library(MLmetrics)
+library(parallel)
 
-# this script assumes it is run from the project root (see RF_DCV_monthly.slurm,
-# which cd's there before calling Rscript). uncomment and edit if running
-# interactively from elsewhere:
+# uncomment and edit if running from somewhere other than the project root:
 # setwd("your/project/root")
 
-n_cores <- as.numeric(Sys.getenv("SLURM_CPUS_PER_TASK", 1))
+# use all but one local core, so the machine stays responsive for other work -
+# edit this directly if you want to use more or fewer cores
+n_cores <- max(1, parallel::detectCores() - 1)
+cat("Using", n_cores, "cores locally\n")
+
 future::plan(future::multisession, workers = max(1, n_cores - 1))
 
 base_output_dir <- "Output/RF_DCV/RF_ML_monthly/"
@@ -51,7 +61,7 @@ if (!dir.exists(base_output_dir)) dir.create(base_output_dir, recursive = TRUE)
 
 # 2. load data and define feature combinations ---------------------------------
 
-ML_data <- readRDS("Data/output/ML_data/ML_monthly.rds")
+ML_data <- readRDS("Data/input/ML_monthly.rds")
 
 physical_features  <- c("light_eff", "disch_skew")
 chemical_features  <- c("DIC", "nutrient_index")
@@ -106,7 +116,7 @@ run_double_cv <- function(target_var, features, combination_name, n_cores, origi
 
     # num.threads = 1 here is intentional: future already parallelizes across
     # the inner cv's hyperparameter combinations, so each individual fit
-    # should stay single-threaded to avoid oversubscribing cpus on a shared node
+    # should stay single-threaded to avoid oversubscribing local cpu cores
     learner <- lrn("regr.ranger", predict_type = "response",
                    seed = fold_seed,
                    num.threads = 1)
@@ -209,3 +219,5 @@ summary_results <- do.call(rbind, lapply(targets, function(target) {
 print(summary_results)
 write.csv(summary_results, file.path(base_output_dir, "feature_combination_summary.csv"), row.names = FALSE)
 saveRDS(all_results,       file.path(base_output_dir, "all_feature_combination_results.rds"))
+
+cat("\ndone. results saved to:", base_output_dir, "\n")
