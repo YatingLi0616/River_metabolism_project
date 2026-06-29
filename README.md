@@ -1,4 +1,4 @@
-# Code for: "Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States"
+# Code and data for: "Environmental drivers of river ecosystem metabolism and their implications for enhanced weathering across the contiguous United States"
 
 this folder contains the code for two parts of the analysis: how two key
 predictor variables (nutrient index, discharge skewness) are calculated,
@@ -11,9 +11,9 @@ project_root/
 ├── 1_Calculate_nutrient_index_and_discharge_skewness.R   <- methodology template, see note below
 │
 ├── 2_Machine_learning/
-│   ├── 1_RF_DCV_monthly.R     nested cv comparison of feature combinations
-│   ├── 2_RF_monthly.R         trains the main rf models + shap importance
-│   └── 3_pdp_analysis.R       conditional pdp/ice analysis on those models
+│   ├── 2_1_RF_DCV_monthly.R     nested cv comparison of feature combinations
+│   ├── 2_2_RF_monthly.R         trains the main rf models + shap importance
+│   └── 2_3_pdp_analysis.R       conditional pdp/ice analysis on those models
 │
 └── Data/
     └── input/
